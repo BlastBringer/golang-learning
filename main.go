@@ -12,11 +12,20 @@ type Client struct{
 }
 
 type Server struct{
-	room
+	room []Client 
+	name string 
+
 }
 
-func (c Client) Useradded (){
+func (s *Server) Setroom(namestr string, roomsize int) {
+	s.name = namestr 
+	s.room = make([]Client, roomsize)
+}
+
+func (s *Server) Useradded (c Client){
+	s.room = append(s.room, c)
 	fmt.Sprintf("User added to the server : ", c.name)
+	
 }
 
 
