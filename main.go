@@ -1,41 +1,45 @@
 package main 
 
-
-import(
-	"fmt"
-	"net/http"
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"log"
+	_ "image/png"
 )
 
-type Client struct{
-	Id int 
-	name string
+var fishimg *ebiten.Image
+
+func init(){
+	var err error 
+	fishimg, _, err = ebitenutil.NewImageFromFile("fish.png")
+	if err != nil{
+		 log.Fatal(err)
+	}
 }
 
-type Server struct{
-	room []Client 
-	name string 
+type Game struct{
 
 }
 
-func (s *Server) Setroom(namestr string, roomsize int) {
-	s.name = namestr 
-	s.room = make([]Client, roomsize)
+func(g *Game) Update () error{
+	return nil
+}
+func (g *Game)Draw(screen *ebiten.Image){
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Scale(0.75, 0.75)
+
+	ebitenutil.DebugPrint(screen, "hello there ebiten!")
+	screen.DrawImage(fishimg, op)
 }
 
-func (s *Server) Useradded (c Client){
-	s.room = append(s.room, c)
-	fmt.Sprintf("User added to the server : ", c.name)
-	
+func (g *Game)Layout(outsideWidth , outsideHeight int) (int, int){
+	return 640, 480
 }
-
 
 func main(){
-	fmt.Println("Hello world! Server running on http://localhost:8080")
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "hello there!")
-	})
 
-	http.ListenAndServe(":8080", nil)
-
-
+	ebiten.SetWindowTitle("flappy fish prototype!")
+	if err := ebiten.RunGame(&Game{}); err != nil {
+		log.Fatal(err)
+	}
 }
