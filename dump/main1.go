@@ -6,43 +6,34 @@ import(
 )
 
 const englishHelloPrefix = "Hello, "
+const spanish = "Spanish"
+const spanishHelloPrefix = "Hola, "
+const french = "French"
+const frenchHelloPrefix = "Bonjour, "
 
 
 
-func hello(name, language string) string{
-	if language == "es"{
-		return "Hola, " + name
+
+
+func Helloworld(name string, language string) string{
+	if name == ""{
+		name = "World"
 	}
 
-	if language == "fr"{
-		return "Bonjour, "+ name
+	if language == french{
+		return frenchHelloPrefix + name
 	}
-
-	return "Hello, " + name
-}
-
-
-//refactored
-func Hello(name, language string) string{
-	return fmt.Sprintf("%s , %s", greeting[language], name)
-}
-var greeting = map[string]string{
-	"es" : "Hola",
-	"fr" : "Bonjour",
-	"en" : "Hello",
-}
-
-
-
-func Helloworld(name string) string{
+	if language == spanish {
+		return spanishHelloPrefix + name
+	}
 	return englishHelloPrefix + name
 }
 
 
 
+
 func main(){
-	fmt.Println(hello("rahul", "en"),
-	Hello("rahul", "fr"))
+	fmt.Println(Helloworld("Rahul", ""))
 
 
 }
