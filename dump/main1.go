@@ -1,7 +1,13 @@
 package main 
 
 
-import "fmt"
+import(
+	"fmt"
+)
+
+const englishHelloPrefix = "Hello, "
+
+
 
 func hello(name, language string) string{
 	if language == "es"{
@@ -28,8 +34,15 @@ var greeting = map[string]string{
 
 
 
+func Helloworld(name string) string{
+	return englishHelloPrefix + name
+}
+
+
+
 func main(){
-	fmt.Println("hello world!")
 	fmt.Println(hello("rahul", "en"),
 	Hello("rahul", "fr"))
+
+
 }
