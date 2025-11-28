@@ -2,24 +2,44 @@ package main
 
 import (
 	"fmt"
-	"net"
-	"sync"
+	"os"
+	"log"
 )
 
-func main(){
-	var wg sync.WaitGroup
-	for i := 0; i <= 1024; i++{
-		wg.Add(1)
-		go func(j int){
-		defer wg.Done()
-		address := fmt.Sprintf("scanme.nmap.org:%d", j)
-		conn, err := net.Dial("tcp", address); if err != nil{
-			return
-		}
-		conn.Close() 
-		fmt.Printf("%d open \n", j)
-		}(i)
+type FooReader struct{} 
 
+func(fooReader *FooReader) Read(b []byte) (int, error){
+	fmt.Print("in > ")
+	return os.Stdin.Read(b)
+}
+
+type FooWriter struct{}
+
+func (fooWriter *FooWriter) Write(b []byte) (int, error) {
+	fmt.Print("out> ")
+	return os.Stdout.Write(b)
+}
+
+func main(){
+	var (
+		reader FooReader 
+		writer FooWriter 
+	)
+
+	input := make([]byte, 4096)
+
+	s, err := reader.Read(input)
+	if err != nil{
+		log.Fatalln("Unable to read data")
 	}
-	wg.Wait()
+
+	fmt.Printf("Read %d bytes from stdin\n", s)
+	
+	//use writer to write output
+	s, err = writer.Write(input)
+	if err != nil{
+		log.Fatalln("Unable to write the data")
+	}
+
+	fmt.Printf("wrote %d bytes to stdout\n", s)
 }
