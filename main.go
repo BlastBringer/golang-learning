@@ -1,46 +1,98 @@
-package main 
+package main
 
 import (
+	"image"
+	"os"
+
+	"github.com/ebitengine/debugui"
 	"github.com/hajimehoshi/ebiten/v2"
-	"log"
+	"github.com/hajimehoshi/ebiten/v2/text"
+
+	"fmt"
+	"image/color"
 	_ "image/png"
- "image/color"
+	"log"
+
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
 )
 
 const (
-	gridSize = 40
-	screenH = 600
-	screenW = 800
+	screenH = 300
+	screenW = 400
+	SampleText = "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG"
 )
 
 
+func increment(g *Game){
+	g.fontSize++
+	if g.fontSize >= 60{
+		g.fontSize = 60
+	}
+	g.rebuildFont()
+}
+
+func decrement(g *Game){
+	g.fontSize-- 
+	if g.fontSize < 8{
+		g.fontSize = 8
+	}
+	g.rebuildFont()
+}
+
+
+func NewGame() *Game{
+	data, _ := os.ReadFile("ShinyCrystal-Yq3z4.ttf")
+	g := &Game{
+		fontSize: 16,
+		ttfData : data,
+	}
+	g.rebuildFont()
+	return g
+}
+
 type Game struct{
-	camX float64
-	camY float64
+	debugUI debugui.DebugUI 
+	fontSize int 
+	fontFace font.Face 
+	ttfData []byte
+}
+
+func (g *Game) rebuildFont(){
+	tt , _ := opentype.Parse(g.ttfData)
+	face , _ := opentype.NewFace(tt, &opentype.FaceOptions{
+		Size : float64(g.fontSize),
+		DPI : 72, 
+		Hinting : font.HintingFull,
+
+	})
+	g.fontFace = face
 }
 
 func(g *Game) Update () error{
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) {g.camX += 4}
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) {g.camX -= 4}
-	if ebiten.IsKeyPressed(ebiten.KeyDown) {g.camY += 4}
-	if ebiten.IsKeyPressed(ebiten.KeyUp) {g.camY -= 4}
-	return nil 
+	_, err := g.debugUI.Update(func(ctx *debugui.Context) error{
+		ctx.Window("fontsize", image.Rect(10,10,200,100), func(layout debugui.ContainerLayout){
+			ctx.Text(fmt.Sprintf("Value : %d", g.fontSize))
+			ctx.Button("increment").On(func(){increment(g)})
+			ctx.Button("decrement").On(func(){decrement(g)})
+		})
+
+		return nil 
+	})
+
+	return err
 }
+
+
+
 func (g *Game)Draw(screen *ebiten.Image){
-	screen.Fill(color.RGBA{20,20,20,255})
-	offX := int(g.camX) % gridSize 
-	offY := int(g.camY) % gridSize 
+	screen.Fill(color.Black)
+	
+	
+	g.debugUI.Draw(screen)
+	text.Draw(screen, SampleText, g.fontFace, 50 , 100, color.White)
 
-	for x := -offX; x < screenW; x += gridSize{
-		for y := -offY ; y < screenH; y += gridSize{
-			rect := ebiten.NewImage(gridSize-1, gridSize-1)
-			rect.Fill(color.RGBA{60,60,60,255})
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(x), float64(y))
-			screen.DrawImage(rect, op)
-		}
-	}
-
+	
 
 }
 
@@ -49,9 +101,10 @@ func (g *Game)Layout(outsideWidth , outsideHeight int) (int, int){
 }
 
 func main(){
-
-	ebiten.SetWindowTitle("flappy fish prototype!")
-	if err := ebiten.RunGame(&Game{}); err != nil {
+	game := NewGame()	
+	ebiten.SetWindowSize(800, 600)
+	ebiten.SetWindowTitle("Font size changer!")
+	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}
 }
