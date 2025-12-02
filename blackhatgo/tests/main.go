@@ -7,7 +7,7 @@ import(
 
 func f(from string){
 	for i := range 3{
-		fmt.Println(from, ":", i)
+		fmt.Println(from, "=", i)
 	}
 }
 
