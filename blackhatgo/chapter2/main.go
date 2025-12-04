@@ -1,46 +1,23 @@
-//writing a echo server
 package main 
 
+
 import (
-	"log"
-	"net"
-	"bufio"
+	"fmt"
+	"time"
 )
 
-func echo(conn net.Conn){
-	defer conn.Close() 
+func main(){
 
-	reader := bufio.NewReader(conn)
-	s, err := reader.ReadString('\n')
-	if err != nil{
-		log.Fatalln("Unable to read data")
+	money := 0
+	for{
+		time.Sleep(time.Duration(time.Second) * 1)
+		money++
+		fmt.Println(makemoney(money))
 	}
-	log.Printf("Read %d bytes: %s", len(s), s)
-	log.Println("Writing data")
-	writer := bufio.NewWriter(conn)
-	if _, err := writer.WriteString(s); err != nil{
-		log.Fatalln("Unable to write data")
-	}
-	writer.Flush()
-
 }
 
 
-func main(){
-	//bind to tcp port 20080 on all interfaces
-	listener, err := net.Listen("tcp", ":20080")
-	if err != nil{
-		log.Fatalln("Unable to bind to port")
-	}
-
-	log.Println("listening on 0.0.0.0:20080")
-	for{
-		//wait for connection. Create net.Conn on connection established
-		conn, err := listener.Accept()
-		log.Println("Recived connection")
-		if err != nil{
-			log.Fatalln("unable to accept connection")
-		}
-		go echo(conn)
-	}
+func makemoney(money int) string {
+	return fmt.Sprintf("%d Rupees made on %d:%d hrs:mins", money, time.Now().Local().Hour(), time.Now().Local().Minute())
+	
 }
