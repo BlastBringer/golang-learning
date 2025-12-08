@@ -1,41 +1,46 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
+"fmt"
+"os"
+"encoding/csv"
+"strconv"
 )
-
-func parser(str string) (map[string]string){
-	result := map[string]string{}
-	reader := bufio.NewReader(os.Stdin)
-
-	strvalues := []string{}
-	currentstring := ""
-	for _, val := range str{
-		if val == "\n"{
-
-		}
-		currentstring += val 
-		
-	}
-
-
-
-
-
-	return result
-
-
+type csvInfo struct{
+	name string 
+	age int 
+	city string
 }
 
 
 func main(){
-	input := `
-	name=Rahul
-	age=21
-	city=bangalore
-	`
+	file , err := os.Open("hello.csv")
+	if err != nil{
+		fmt.Println("Error occured while reading a file:", file)
+	}
 
-	out := parser(input)
-	fmt.Println(out)
+	defer file.Close()
+	csvReader := csv.NewReader(file)
+	lines, err := csvReader.ReadAll()
+	if err != nil{
+		panic(err)
+	}
+
+
+	infoCsv := []csvInfo{}
+	for _, line := range lines{
+		age, err:= strconv.Atoi(line[1])
+		if err!=nil{panic(err)}
+
+		newinfo := csvInfo{
+			name : line[0],
+			age : age,
+			city : line[2],
+		}
+
+		infoCsv = append(infoCsv, newinfo)
+
+	}
+
+	fmt.Println(infoCsv)
 }
