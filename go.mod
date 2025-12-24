@@ -11,7 +11,7 @@ require (
 	github.com/go-text/typesetting v0.3.0 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/hajimehoshi/bitmapfont/v4 v4.1.0 // indirect
-	github.com/hajimehoshi/ebiten/v2 v2.9.4 // indirect
+	github.com/hajimehoshi/ebiten/v2 v2.9.6 // indirect
 	github.com/jackpal/bencode-go v1.0.2 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
