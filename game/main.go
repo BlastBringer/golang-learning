@@ -1,35 +1,33 @@
 package main
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"fmt"
+
 )
 
-const(
-	screenHeight = 400
-	screenWidth = 600
-)
-type Game struct{
-	
+func add(a, b int, ch chan int){
+	ch <- a+b
 }
 
-func(g *Game) Update()error {
-	return nil 
+func sender(ch chan int){
+	ch <- 100
 }
 
-func (g *Game) Draw(screen *ebiten.Image){
-	ebitenutil.DebugPrint(screen, "Hello world!")
-}
-
-func (g *Game) Layout(outsideWidth, outsideHeight int)(int, int){
-	return screenWidth, screenHeight
-}
-
+//lets learn and make some channels and goroutines
 func main(){
-	game := &Game{}
-	ebiten.SetWindowTitle("Game")
-	ebiten.SetWindowSize(screenWidth, screenHeight)
-	err := ebiten.RunGame(game); if err != nil{
-		panic(err)
+	ch := make(chan int)
+	ch2 := make(chan int)
+	go add(2, 4, ch)
+	go sender(ch2)
+
+	select{
+	case v := <-ch:
+		fmt.Println(v)
+	case v := <-ch2:
+		fmt.Println(v)
+	default:
+		fmt.Print("nodata")
 	}
+
+	
 }

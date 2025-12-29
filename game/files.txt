@@ -1,0 +1,47 @@
+package main
+
+import (
+	"image/color"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/vector"
+	"log"
+)
+
+const(
+	screenHeight = 400
+	screenWidth = 600
+)
+type Game struct{
+	bg *ebiten.Image 
+}
+
+
+func(g *Game) Update()error {
+	return nil 
+}
+
+func (g *Game) Draw(screen *ebiten.Image){
+	ebitenutil.DebugPrint(screen, "Hello world!")
+	screen.DrawImage(g.bg, nil)
+	vector.FillRect(screen, 200, 50, 200, 200,color.Black,false)
+	
+}
+
+func (g *Game) Layout(outsideWidth, outsideHeight int)(int, int){
+	return screenWidth, screenHeight
+}
+
+func main(){
+	//background 
+	img, _, err := ebitenutil.NewImageFromFile("drawing.png"); if err != nil{
+		log.Fatal(err)
+	}
+	game := &Game{bg : img,}
+	ebiten.SetWindowTitle("Game")
+	ebiten.SetWindowSize(screenWidth, screenHeight)
+	mainerr := ebiten.RunGame(game); if err != nil{
+		log.Fatal(mainerr)
+	}
+}
